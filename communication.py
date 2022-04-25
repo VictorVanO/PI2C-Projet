@@ -14,7 +14,18 @@ text={
    "name": "CKC",
    "matricules": ["20253", "21306"]
 }
+text2={
+   "request": "subscribe",
+   "port": 3002,
+   "name": "CAVA",
+   "matricules": ["20252", "21305"]
+}
 repPing = {"response": "pong"}
+repMove = {
+    "response": "move",
+    "move": 0,
+    "message": "Un aveugle jouerais mieux que toi"
+}
 
 def communication():
     with socket.socket() as s:
@@ -28,7 +39,13 @@ def communication():
                 if message['request']=='ping':
                     client.send(json.dumps(repPing).encode())
                 if message['request']=='play':
-                    print(message)
+                    print(message['state']['board'])
+                    if message['state']['board']==[[28, 35], [27, 36]]:
+                        repMove['move']=20
+                        client.send(json.dumps(repMove).encode())
+                    else:
+                        repMove['move']=29
+                        client.send(json.dumps(repMove).encode())
 
 
 def connexion():
@@ -46,5 +63,6 @@ def connexion():
             
 
 if __name__=='__main__':
-    
+    if port == '3002':
+        text=text2
     connexion()

@@ -1,4 +1,4 @@
-import connexion
+import communication
 
 if __name__ == '__main__':
     test
