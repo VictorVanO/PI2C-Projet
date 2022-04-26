@@ -14,18 +14,23 @@ text={
    "name": "CKC",
    "matricules": ["20253", "21306"]
 }
+
 text2={
    "request": "subscribe",
    "port": 3002,
    "name": "CAVA",
    "matricules": ["20252", "21305"]
 }
+
 repPing = {"response": "pong"}
+
+#repMove['move'] = null pour passer le tour
 repMove = {
     "response": "move",
     "move": 0,
     "message": "Un aveugle jouerais mieux que toi"
 }
+
 surrend={
    "response": "giveup",
 }
