@@ -1,15 +1,14 @@
-# Reversegam: a clone of Othello/Reversi
+#ref : https://inventwithpython.com/invent4thed/chapter15.html
 import random
 import sys
-WIDTH = 8 # Board is 8 spaces wide.
-HEIGHT = 8 # Board is 8 spaces tall.
+width = 8
+height = 8
 def drawBoard(board):
-    # Print the board passed to this function. Return None.
     print('  12345678')
     print(' +--------+')
-    for y in range(HEIGHT):
+    for y in range(height):
         print('%s|' % (y+1), end='')
-        for x in range(WIDTH):
+        for x in range(width):
             print(board[x][y], end='')
         print('|%s' % (y+1))
     print(' +--------+')
@@ -18,7 +17,7 @@ def drawBoard(board):
 def getNewBoard():
     # Create a brand-new, blank board data structure.
     board = []
-    for i in range(WIDTH):
+    for i in range(width):
         board.append([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])
     return board
 
@@ -34,8 +33,7 @@ def isValidMove(board, tile, xstart, ystart):
         otherTile = 'X'
 
     tilesToFlip = []
-    for xdirection, ydirection in [[0, 1], [1, 1], [1, 0], [1, -1],
-        [0, -1], [-1, -1], [-1, 0], [-1, 1]]:
+    for xdirection, ydirection in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]:
         x, y = xstart, ystart
         x += xdirection # First step in the x direction
         y += ydirection # First step in the y direction
@@ -57,7 +55,7 @@ def isValidMove(board, tile, xstart, ystart):
     return tilesToFlip
 def isOnBoard(x, y):
     # Return True if the coordinates are located on the board.
-    return x >= 0 and x <= WIDTH - 1 and y >= 0 and y <= HEIGHT - 1
+    return x >= 0 and x <= width - 1 and y >= 0 and y <= height - 1
 
 def getBoardWithValidMoves(board, tile):
     # Return a new board with periods marking the valid moves the player can make.
@@ -70,8 +68,8 @@ def getBoardWithValidMoves(board, tile):
 def getValidMoves(board, tile):
     # Return a list of [x,y] lists of valid moves for the given player on the given board.
     validMoves = []
-    for x in range(WIDTH):
-        for y in range(HEIGHT):
+    for x in range(width):
+        for y in range(height):
             if isValidMove(board, tile, x, y) != False:
                 validMoves.append([x, y])
     return validMoves
@@ -80,8 +78,8 @@ def getScoreOfBoard(board):
     # Determine the score by counting the tiles. Return a dictionary with keys 'X' and 'O'.
     xscore = 0
     oscore = 0
-    for x in range(WIDTH):
-        for y in range(HEIGHT):
+    for x in range(width):
+        for y in range(height):
             if board[x][y] == 'X':
                 xscore += 1
             if board[x][y] == 'O':
@@ -93,14 +91,14 @@ def enterPlayerTile():
     # Return a list with the player's tile as the first item and the computer's tile as the second.
     tile = ''
     while not (tile == 'X' or tile == 'O'):
-        print('Do you want to be X or O?')
+        print('Do you want to be black X or white O?')
         tile = input().upper()
 
     # The first element in the list is the player's tile, and the second is the computer's tile.
-    if tile == 'X':
-        return ['X', 'O']
-    else:
+    if tile == 'O':
         return ['O', 'X']
+    else:
+        return ['X', 'O']
 
 def whoGoesFirst():
     # Randomly choose who goes first.
@@ -125,15 +123,15 @@ def getBoardCopy(board):
     # Make a duplicate of the board list and return it.
     boardCopy = getNewBoard()
 
-    for x in range(WIDTH):
-        for y in range(HEIGHT):
+    for x in range(width):
+        for y in range(height):
             boardCopy[x][y] = board[x][y]
 
     return boardCopy
 
 def isOnCorner(x, y):
     # Return True if the position is in one of the four corners.
-    return (x == 0 or x == WIDTH - 1) and (y == 0 or y == HEIGHT - 1)
+    return (x == 0 or x == width - 1) and (y == 0 or y == height - 1)
 
 def getPlayerMove(board, playerTile):
     # Let the player enter their move.
@@ -181,7 +179,7 @@ def getComputerMove(board, computerTile):
 
 def printScore(board, playerTile, computerTile):
     scores = getScoreOfBoard(board)
-    print('You: %s points. Computer: %s points.' % (scores[playerTile], scores[computerTile]))
+    print('You: {} points. Computer: {} points.'.format(scores[playerTile], scores[computerTile]))
 
 def playGame(playerTile, computerTile):
     showHints = False
@@ -190,10 +188,10 @@ def playGame(playerTile, computerTile):
 
     # Clear the board and place starting pieces.
     board = getNewBoard()
-    board[3][3] = 'X'
-    board[3][4] = 'O'
-    board[4][3] = 'O'
-    board[4][4] = 'X'
+    board[3][3] = 'O'
+    board[3][4] = 'X'
+    board[4][3] = 'X'
+    board[4][4] = 'O'
 
     while True:
         playerValidMoves = getValidMoves(board, playerTile)
@@ -226,8 +224,6 @@ def playGame(playerTile, computerTile):
             if computerValidMoves != []:
                 drawBoard(board)
                 printScore(board, playerTile, computerTile)
-
-                input('Press Enter to see the computer\'s move.')
                 move = getComputerMove(board, computerTile)
                 makeMove(board, computerTile, move[0], move[1])
             turn = 'player'
