@@ -11,9 +11,9 @@ def drawBoard(board):
         print('%s|' % (y+1), end='')
         for x in range(WIDTH):
             print(board[x][y], end='')
-            print('|%s' % (y+1))
-        print(' +--------+')
-        print('  12345678')
+        print('|%s' % (y+1))
+    print(' +--------+')
+    print('  12345678')
 
 def getNewBoard():
     # Create a brand-new, blank board data structure.
