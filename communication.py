@@ -26,6 +26,9 @@ repMove = {
     "move": 0,
     "message": "Un aveugle jouerais mieux que toi"
 }
+surrend={
+   "response": "giveup",
+}
 
 def communication():
     with socket.socket() as s:
@@ -39,12 +42,12 @@ def communication():
                 if message['request']=='ping':
                     client.send(json.dumps(repPing).encode())
                 if message['request']=='play':
-                    print(message['state']['board'])
-                    if message['state']['board']==[[28, 35], [27, 36]]:
-                        repMove['move']=20
-                        client.send(json.dumps(repMove).encode())
-                    else:
-                        repMove['move']=29
+                    print(message['state']['board'][0])
+                    #client.send(json.dumps(surrend).encode())
+                    print(message['state']['board'][0]==[28, 35])
+                    if message['state']['board'][0]==[28, 35]:
+                        repMove['move']=44
+                        print(repMove)
                         client.send(json.dumps(repMove).encode())
 
 
