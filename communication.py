@@ -1,7 +1,7 @@
 import json
 import asyncio
 import time
-
+import ia
 import socket
 import threading
 import sys
@@ -47,13 +47,16 @@ def communication():
                 if message['request']=='ping':
                     client.send(json.dumps(repPing).encode())
                 if message['request']=='play':
-                    print(message['state']['board'][0])
-                    #client.send(json.dumps(surrend).encode())
-                    print(message['state']['board'][0]==[28, 35])
-                    if message['state']['board'][0]==[28, 35]:
-                        repMove['move']=44
-                        print(repMove)
-                        client.send(json.dumps(repMove).encode())
+                    reponseMove = ia.test(message['state'],text['name']) #donner le chiffre de la case en integer
+                    repMove['move']=reponseMove
+                    client.send(json.dumps(repMove).encode())
+                    # print(message['state']['board'][0])
+                    # #client.send(json.dumps(surrend).encode())
+                    # print(message['state']['board'][0]==[28, 35])
+                    # if message['state']['board'][0]==[28, 35]:
+                    #     repMove['move']=44
+                    #     print(repMove)
+                    #     client.send(json.dumps(repMove).encode())
 
 
 def connexion():

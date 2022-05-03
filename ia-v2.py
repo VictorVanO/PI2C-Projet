@@ -4,6 +4,7 @@ import sys
 
 width = 8
 height = 8
+compteurDeTour = 1
 '''
 coup = 44
 def test(message,opponentbot):
@@ -100,12 +101,13 @@ def getScoreOfBoard(board):
     return {'X':xscore, 'O':oscore}
 
 def enteropponentTile():
-    # Let the opponent enter which tile they want to be.
-    # Return a list with the opponent's tile as the first item and the computer's tile as the second.
     tile = ''
+    #Randomly chose who plays first
     while not (tile == 'X' or tile == 'O'):
-        print('Do you want to be black X or white O?')
-        tile = input().upper()
+        if random.randint(0, 1) == 0:
+            tile = 'X'
+        else:
+            tile = 'O'
 
     # The first element in the list is the opponent's tile, and the second is the computer's tile.
     if tile == 'O':
@@ -148,14 +150,32 @@ def isOnCorner(x, y):
 
 def getopponentMove(board, opponentTile):
     # Let the opponent enter their move.
-    # Return the move as [x, y] (or return the strings 'hints' or 'quit').
+    # Return the move as [x, y] (or quit)
     DIGITS1TO8 = '1 2 3 4 5 6 7 8'.split()
-    while True:
-        print('Enter your move, "quit" to end the game, or "hints" to toggle hints.')
-        move = input().lower()
-        if move == 'quit' or move == 'hints':
-            return move
+    # while True:
+    #     print('Enter your move, "quit" to end the game, or "hints" to toggle hints.')
+    #     move = input().lower()
+    #     if move == 'quit' or move == 'hints':
+    #         return move
 
+    #     if len(move) == 2 and move[0] in DIGITS1TO8 and move[1] in DIGITS1TO8:
+    #         x = int(move[0]) - 1
+    #         y = int(move[1]) - 1
+    #         if isValidMove(board, opponentTile, x, y) == False:
+    #             continue
+    #         else:
+    #             break
+    #     else:
+    #         print('That is not a valid move. Enter the column (1-8) and then the row (1-8).')
+    #         print('For example, 81 will move on the top-right corner.')
+    # return [x, y]
+
+    #VIC
+    while True:
+        print('Enter the opponent\'s move or \'quit\' to stop the game.')
+        move = input().lower()
+        if move == 'quit':
+            return move
         if len(move) == 2 and move[0] in DIGITS1TO8 and move[1] in DIGITS1TO8:
             x = int(move[0]) - 1
             y = int(move[1]) - 1
@@ -164,9 +184,7 @@ def getopponentMove(board, opponentTile):
             else:
                 break
         else:
-            print('That is not a valid move. Enter the column (1-8) and then the row (1-8).')
-            print('For example, 81 will move on the top-right corner.')
-
+            print('This is not a valid move from the opponent.')
     return [x, y]
 
 def getComputerMove(board, computerTile):
@@ -192,10 +210,9 @@ def getComputerMove(board, computerTile):
 
 def printScore(board, opponentTile, computerTile):
     scores = getScoreOfBoard(board)
-    print('You: {} points. Computer: {} points.'.format(scores[opponentTile], scores[computerTile]))
+    print('IA: {} points. Opponent: {} points.'.format(scores[computerTile], scores[opponentTile]))
 
 def playGame(opponentTile, computerTile):
-    showHints = False
     turn = whoGoesFirst()
     print('The ' + turn + ' will go first.')
 
@@ -215,20 +232,16 @@ def playGame(opponentTile, computerTile):
 
         elif turn == 'opponent': # opponent's turn
             if opponentValidMoves != []:
-                if showHints:
-                    validMovesBoard = getBoardWithValidMoves(board, opponentTile)
-                    drawBoard(validMovesBoard)
-                else:
-                    drawBoard(board)
+                drawBoard(board)
+                global compteurDeTour
+                print('Tour: {}.'.format(compteurDeTour))
+                compteurDeTour += 1
                 printScore(board, opponentTile, computerTile)
 
                 move = getopponentMove(board, opponentTile)
                 if move == 'quit':
                     print('Thanks for playing!')
                     sys.exit() # Terminate the program.
-                elif move == 'hints':
-                    showHints = not showHints
-                    continue
                 else:
                     makeMove(board, opponentTile, move[0], move[1])
             turn = 'computer'
