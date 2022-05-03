@@ -46,7 +46,7 @@ def communication():
                 print(message)
                 if message['request']=='ping': #check if the request is ping send a pong message
                     client.send(json.dumps(repPing).encode())
-<<<<<<< HEAD
+
                 if message['request']=='play':
                     reponseMove = ia.test(message['state'],text['name']) #donner le chiffre de la case en integer
                     repMove['move']=reponseMove
@@ -58,15 +58,7 @@ def communication():
                     #     repMove['move']=44
                     #     print(repMove)
                     #     client.send(json.dumps(repMove).encode())
-=======
-                if message['request']=='play': #check if the request is play send a move message
-                    print(message['state']['board'][0])
-                    print(message['state']['board'][0]==[28, 35])
-                    if message['state']['board'][0]==[28, 35]:
-                        repMove['move']=44
-                        print(repMove)
-                        client.send(json.dumps(repMove).encode())
->>>>>>> 04177f5b25409e4238460ae5704ce95cfe374e0c
+
 
 
 def connexion():
