@@ -7,16 +7,6 @@ width = 8
 height = 8
 compteurDeTour = 1
 
-def drawBoard(board):
-    print('  12345678')
-    print(' +--------+')
-    for y in range(height):
-        print('%s|' % (y+1), end='')
-        for x in range(width):
-            print(board[x][y], end='')
-        print('|%s' % (y+1))
-    print(' +--------+')
-    print('  12345678')
 
 def getNewBoard():
     # Create a brand-new, blank board data structure.
@@ -222,8 +212,9 @@ def findOpponentMove(boardConverted,board):
                 opponentMove = str(i)+str(j)
 
 def getMessage(message, iaPlayer):
-    startGame(message, iaPlayer)
-    return move
+    move = playGame(opponentTile, computerTile, message, iaPlayer)
+    moveConverted = (int(move[0])*8)+int(move[1])
+    return moveConverted #à completer
 
 def findOpponentTurn(message, iaPlayer):
     if message['players'][0] == iaPlayer:
@@ -237,7 +228,6 @@ def printScore(board, opponentTile, computerTile):
 
 def playGame(opponentTile, computerTile, message, iaPlayer):
     turn = findOpponentTurn(message, iaPlayer)
-    print('The ' + turn + ' will go first.')
 
     # Clear the board and place starting pieces.
     board = getNewBoard()
@@ -252,11 +242,10 @@ def playGame(opponentTile, computerTile, message, iaPlayer):
         computerValidMoves = getValidMoves(board, computerTile)
 
         if opponentValidMoves == [] and computerValidMoves == []:
-            return board # No one can move, so end the game.
+            break # No one can move, so end the game.
 
         elif turn == 'opponent': # opponent's turn
             if opponentValidMoves != []:
-                drawBoard(board)
                 global compteurDeTour
                 print('Tour: {}.'.format(compteurDeTour))
                 compteurDeTour += 1
@@ -264,7 +253,6 @@ def playGame(opponentTile, computerTile, message, iaPlayer):
 
                 move = getopponentMove(board, opponentTile)
                 if move == 'quit':
-                    print('Thanks for playing!')
                     sys.exit() # Terminate the program.
                 else:
                     makeMove(board, opponentTile, move[0], move[1])
@@ -272,28 +260,11 @@ def playGame(opponentTile, computerTile, message, iaPlayer):
 
         elif turn == 'computer': # Computer's turn
             if computerValidMoves != []:
-                drawBoard(board)
                 printScore(board, opponentTile, computerTile)
                 move = getComputerMove(board, computerTile)
                 makeMove(board, computerTile, move[0], move[1])
+                return move
             turn = 'opponent'
 
-print('Welcome to Othello !')
 
 opponentTile, computerTile = enterOpponentTile()
-
-while True:
-    finalBoard = playGame(opponentTile, computerTile, message, iaPlayer)
-    # Display the final score.
-    drawBoard(finalBoard)
-    scores = getScoreOfBoard(finalBoard)
-    print('X scored {} points. O scored {} points.'.format(scores['X'],scores['O']))
-    if scores[opponentTile] > scores[computerTile]:
-        print('You beat the computer by %s points! Congratulations!' %(scores[opponentTile] - scores[computerTile]))
-    elif scores[opponentTile] < scores[computerTile]:
-        print('You lost. The computer beat you by %s points.' %(scores[computerTile] - scores[opponentTile]))
-    else:
-        print('The game was a tie!')
-        print('Do you want to play again? (yes or no)')
-        if not input().lower().startswith('y'):
-            break
