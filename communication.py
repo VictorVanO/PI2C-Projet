@@ -24,7 +24,7 @@ text2={
 
 repPing = {"response": "pong"}
 
-#repMove['move'] = null pour passer le tour
+#repMove['move'] = none pour passer le tour
 repMove = {
     "response": "move",
     "move": 0,
@@ -36,16 +36,17 @@ surrend={
 }
 
 def communication():
-    with socket.socket() as s:
+    with socket.socket() as s: # close the socket after the execution
         s.bind(listenAddress)
         s.listen()
-        while True:
+        while True: # infinit loop
             client, address= s.accept()
-            with client:
+            with client: # close the client after the execution
                 message = json.loads(client.recv(2048).decode())
                 print(message)
-                if message['request']=='ping':
+                if message['request']=='ping': #check if the request is ping send a pong message
                     client.send(json.dumps(repPing).encode())
+<<<<<<< HEAD
                 if message['request']=='play':
                     reponseMove = ia.test(message['state'],text['name']) #donner le chiffre de la case en integer
                     repMove['move']=reponseMove
@@ -57,17 +58,26 @@ def communication():
                     #     repMove['move']=44
                     #     print(repMove)
                     #     client.send(json.dumps(repMove).encode())
+=======
+                if message['request']=='play': #check if the request is play send a move message
+                    print(message['state']['board'][0])
+                    print(message['state']['board'][0]==[28, 35])
+                    if message['state']['board'][0]==[28, 35]:
+                        repMove['move']=44
+                        print(repMove)
+                        client.send(json.dumps(repMove).encode())
+>>>>>>> 04177f5b25409e4238460ae5704ce95cfe374e0c
 
 
 def connexion():
     address = ('localhost', 3000)
     message = json.dumps(text)
     
-    with socket.socket() as s:
+    with socket.socket() as s: # close the socket after the execution
         s.connect(address)
         s.send(message.encode())
         reponse = json.loads(s.recv(2048).decode())
-        if reponse['response'] == 'ok':
+        if reponse['response'] == 'ok': # if the response is ok, it means that we succesfull connected so run communication
             communication()
         
         
