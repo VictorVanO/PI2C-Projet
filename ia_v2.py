@@ -118,44 +118,6 @@ def getBoardCopy(board):
 
     return boardCopy
 
-def getopponentMove(board, opponentTile):
-    # Let the opponent enter their move.
-    # Return the move as [x, y] (or quit)
-    DIGITS1TO8 = '1 2 3 4 5 6 7 8'.split()
-    # while True:
-    #     print('Enter your move, "quit" to end the game, or "hints" to toggle hints.')
-    #     move = input().lower()
-    #     if move == 'quit' or move == 'hints':
-    #         return move
-
-    #     if len(move) == 2 and move[0] in DIGITS1TO8 and move[1] in DIGITS1TO8:
-    #         x = int(move[0]) - 1
-    #         y = int(move[1]) - 1
-    #         if isValidMove(board, opponentTile, x, y) == False:
-    #             continue
-    #         else:
-    #             break
-    #     else:
-    #         print('That is not a valid move. Enter the column (1-8) and then the row (1-8).')
-    #         print('For example, 81 will move on the top-right corner.')
-    # return [x, y]
-
-    #VIC
-    while True:
-        print('Enter the opponent\'s move or \'quit\' to stop the game.')
-        move = input().lower()
-        if move == 'quit':
-            return move
-        if len(move) == 2 and move[0] in DIGITS1TO8 and move[1] in DIGITS1TO8:
-            x = int(move[0])
-            y = int(move[1])
-            if isValidMove(board, opponentTile, x, y) == False:
-                continue
-            else:
-                break
-        else:
-            print('This is not a valid move from the opponent.')
-    return [x, y]
 
 def isOnCorner(x, y):
     # Return True if the position is in one of the four corners.
@@ -209,7 +171,7 @@ def findOpponentMove(boardConverted,board):
     for i in range(8):
         for j in range(8):
             if boardConverted[i][j]!='' & board[i][j]=='':
-                opponentMove = str(i)+str(j)
+                return [i, j]
 
 def getMessage(message, iaPlayer):
     move = playGame(opponentTile, computerTile, message, iaPlayer)
@@ -224,7 +186,6 @@ def findOpponentTurn(message, iaPlayer):
 
 def printScore(board, opponentTile, computerTile):
     scores = getScoreOfBoard(board)
-    print('IA: {} points. Opponent: {} points.'.format(scores[computerTile], scores[opponentTile]))
 
 def playGame(opponentTile, computerTile, message, iaPlayer):
     turn = findOpponentTurn(message, iaPlayer)
@@ -246,13 +207,10 @@ def playGame(opponentTile, computerTile, message, iaPlayer):
 
         elif turn == 'opponent': # opponent's turn
             if opponentValidMoves != []:
-                global compteurDeTour
-                print('Tour: {}.'.format(compteurDeTour))
-                compteurDeTour += 1
                 printScore(board, opponentTile, computerTile)
-
-                move = getopponentMove(board, opponentTile)
-                if move == 'quit':
+                boardConverted = boardConvertion(message)
+                move = findOpponentMove(boardConverted,board)
+                if move == 'quit': # pas prévu
                     sys.exit() # Terminate the program.
                 else:
                     makeMove(board, opponentTile, move[0], move[1])
