@@ -1,7 +1,7 @@
 import json
 import asyncio
 import time
-#import ia
+import ia_v2
 import socket
 import threading
 import sys
@@ -48,7 +48,7 @@ def communication():
                     client.send(json.dumps(repPing).encode())
 
                 if message['request']=='play':
-                    reponseMove = ia.test(message['state'],text['name']) #donner le chiffre de la case en integer
+                    reponseMove = ia_v2.getMessage(message['state'],text['name']) #donner le chiffre de la case en integer
                     repMove['move']=reponseMove
                     client.send(json.dumps(repMove).encode())
                     # print(message['state']['board'][0])
@@ -58,40 +58,6 @@ def communication():
                     #     repMove['move']=44
                     #     print(repMove)
                     #     client.send(json.dumps(repMove).encode())
-def boardConvertion(message):
-    plateau = message['board']
-    boardConverted=[[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']]
-    for i in plateau[0]:
-        x=i//8
-        y=i-(8*x)
-        boardConverted[x][y]='X'
-    for i in plateau[1]:
-        x=i//8
-        y=i-(8*x)
-        boardConverted[x][y]='O'
-    print(boardConverted[0][0])
-    return boardConverted
-
-def findOpponentMove(boardConverted,board):
-    opponentMove =''
-    for i in range(8):
-        for j in range(8):
-            if boardConverted[i][j]!='' & board[i][j]=='':
-                opponentMove = str(i)+str(j)
-
-def findOpponentTurn(message, iaPlayer):
-    if message['players'][0]==iaPlayer:
-        return 'computer' # ia joue en premier
-    else:
-        return 'opponent' # ia joue en deuxieme
-
 
 
 def connexion():
@@ -109,7 +75,6 @@ def connexion():
             
 message ={'players': ['CAVA', 'CKC'], 'current': 1, 'board': [[28, 35, 44, 36], [27]]}
 if __name__=='__main__':
-    # if port == '3002':
-    #     text=text2
-    # connexion()
-    boardConvertion(message)
+    if port == '3002':
+        text=text2
+    connexion()

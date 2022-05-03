@@ -1,21 +1,12 @@
 #reference : https://inventwithpython.com/invent4thed/chapter15.html
 import random
 import sys
+import communication
 
 width = 8
 height = 8
 compteurDeTour = 1
-'''
-coup = 44
-def test(message,opponentbot):
-    board=message['board']
-    opponents=message['opponents'] #nom des 2 joueurs ['opponent1','opponent2']
-    #conversion board
-    #definir si blanc ou noir
-    #appeler l'ia
-    #convertir le move de l'ia
-    return coup
-'''
+
 def drawBoard(board):
     print('  12345678')
     print(' +--------+')
@@ -68,16 +59,8 @@ def isValidMove(board, tile, xstart, ystart):
     return tilesToFlip
 
 def isOnBoard(x, y):
-    # Return True if the coordinates are located on the board.
+    # Renvoi True si les coordonnées sont sur le plateau
     return x >= 0 and x <= width - 1 and y >= 0 and y <= height - 1
-
-def getBoardWithValidMoves(board, tile):
-    # Return a new board with periods marking the valid moves the opponent can make.
-    boardCopy = getBoardCopy(board)
-
-    for x, y in getValidMoves(boardCopy, tile):
-        boardCopy[x][y] = '.'
-    return boardCopy
 
 def getValidMoves(board, tile):
     # Return a list of [x,y] lists of valid moves for the given opponent on the given board.
@@ -90,18 +73,19 @@ def getValidMoves(board, tile):
 
 def getScoreOfBoard(board):
     # Determine the score by counting the tiles. Return a dictionary with keys 'X' and 'O'.
-    xscore = 0
-    oscore = 0
+    blackScore = 0
+    whiteScore = 0
     for x in range(width):
         for y in range(height):
             if board[x][y] == 'X':
-                xscore += 1
+                blackScore += 1
             if board[x][y] == 'O':
-                oscore += 1
-    return {'X':xscore, 'O':oscore}
+                whiteScore += 1
+    return {'X':blackScore, 'O':whiteScore}
 
-def enteropponentTile():
+def enterOpponentTile():
     tile = ''
+    
     #Randomly chose who plays first
     while not (tile == 'X' or tile == 'O'):
         if random.randint(0, 1) == 0:
@@ -110,10 +94,10 @@ def enteropponentTile():
             tile = 'O'
 
     # The first element in the list is the opponent's tile, and the second is the computer's tile.
-    if tile == 'O':
-        return ['O', 'X']
-    else:
+    if tile == 'X':
         return ['X', 'O']
+    else:
+        return ['O', 'X']
 
 def whoGoesFirst():
     # Randomly choose who goes first.
@@ -144,10 +128,6 @@ def getBoardCopy(board):
 
     return boardCopy
 
-def isOnCorner(x, y):
-    # Return True if the position is in one of the four corners.
-    return (x == 0 or x == width - 1) and (y == 0 or y == height - 1)
-
 def getopponentMove(board, opponentTile):
     # Let the opponent enter their move.
     # Return the move as [x, y] (or quit)
@@ -177,8 +157,8 @@ def getopponentMove(board, opponentTile):
         if move == 'quit':
             return move
         if len(move) == 2 and move[0] in DIGITS1TO8 and move[1] in DIGITS1TO8:
-            x = int(move[0]) - 1
-            y = int(move[1]) - 1
+            x = int(move[0])
+            y = int(move[1])
             if isValidMove(board, opponentTile, x, y) == False:
                 continue
             else:
@@ -186,6 +166,10 @@ def getopponentMove(board, opponentTile):
         else:
             print('This is not a valid move from the opponent.')
     return [x, y]
+
+def isOnCorner(x, y):
+    # Return True if the position is in one of the four corners.
+    return (x == 0 or x == width - 1) and (y == 0 or y == height - 1)
 
 def getComputerMove(board, computerTile):
     # Given a board and the computer's tile, determine where to
@@ -208,12 +192,51 @@ def getComputerMove(board, computerTile):
             bestScore = score
     return bestMove
 
+# Ajout fonction conversion
+def boardConvertion(message):
+    plateau = message['board']
+    boardConverted=[[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+                    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']]
+    for i in plateau[0]:
+        x=i//8
+        y=i-(8*x)
+        boardConverted[x][y]='X'
+    for i in plateau[1]:
+        x=i//8
+        y=i-(8*x)
+        boardConverted[x][y]='O'
+    print(boardConverted[0][0])
+    return boardConverted
+
+def findOpponentMove(boardConverted,board):
+    opponentMove =''
+    for i in range(8):
+        for j in range(8):
+            if boardConverted[i][j]!='' & board[i][j]=='':
+                opponentMove = str(i)+str(j)
+
+def getMessage(message, iaPlayer):
+    startGame(message, iaPlayer)
+    return move
+
+def findOpponentTurn(message, iaPlayer):
+    if message['players'][0] == iaPlayer:
+        return 'computer' # ia joue en premier
+    else:
+        return 'opponent' # ia joue en deuxieme
+
 def printScore(board, opponentTile, computerTile):
     scores = getScoreOfBoard(board)
     print('IA: {} points. Opponent: {} points.'.format(scores[computerTile], scores[opponentTile]))
 
-def playGame(opponentTile, computerTile):
-    turn = whoGoesFirst()
+def playGame(opponentTile, computerTile, message, iaPlayer):
+    turn = findOpponentTurn(message, iaPlayer)
     print('The ' + turn + ' will go first.')
 
     # Clear the board and place starting pieces.
@@ -224,6 +247,7 @@ def playGame(opponentTile, computerTile):
     board[4][4] = 'O'
 
     while True:
+        #Récupère les coups possibles pour chaque joueur
         opponentValidMoves = getValidMoves(board, opponentTile)
         computerValidMoves = getValidMoves(board, computerTile)
 
@@ -256,14 +280,14 @@ def playGame(opponentTile, computerTile):
 
 print('Welcome to Othello !')
 
-opponentTile, computerTile = enteropponentTile()
+opponentTile, computerTile = enterOpponentTile()
 
 while True:
-    finalBoard = playGame(opponentTile, computerTile)
+    finalBoard = playGame(opponentTile, computerTile, message, iaPlayer)
     # Display the final score.
     drawBoard(finalBoard)
     scores = getScoreOfBoard(finalBoard)
-    print('X scored %s points. O scored %s points.' % (scores['X'],scores['O']))
+    print('X scored {} points. O scored {} points.'.format(scores['X'],scores['O']))
     if scores[opponentTile] > scores[computerTile]:
         print('You beat the computer by %s points! Congratulations!' %(scores[opponentTile] - scores[computerTile]))
     elif scores[opponentTile] < scores[computerTile]:
