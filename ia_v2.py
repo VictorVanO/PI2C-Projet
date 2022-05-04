@@ -5,8 +5,7 @@ import communication
 
 width = 8
 height = 8
-compteurDeTour = 1
-
+opponentTile, computerTile =['','']
 
 def getNewBoard():
     # Create a brand-new, blank board data structure.
@@ -72,29 +71,6 @@ def getScoreOfBoard(board):
             if board[x][y] == 'O':
                 whiteScore += 1
     return {'X':blackScore, 'O':whiteScore}
-
-def enterOpponentTile():
-    tile = ''
-    
-    #Randomly chose who plays first
-    while not (tile == 'X' or tile == 'O'):
-        if random.randint(0, 1) == 0:
-            tile = 'X'
-        else:
-            tile = 'O'
-
-    # The first element in the list is the opponent's tile, and the second is the computer's tile.
-    if tile == 'X':
-        return ['X', 'O']
-    else:
-        return ['O', 'X']
-
-def whoGoesFirst():
-    # Randomly choose who goes first.
-    if random.randint(0, 1) == 0:
-        return 'computer'
-    else:
-        return 'opponent'
 
 def makeMove(board, tile, xstart, ystart):
     # Place the tile on the board at xstart, ystart and flip any of the opponent's pieces.
@@ -163,39 +139,45 @@ def boardConvertion(message):
         x=i//8
         y=i-(8*x)
         boardConverted[x][y]='O'
-    print(boardConverted[0][0])
     return boardConverted
 
 def findOpponentMove(boardConverted,board):
     opponentMove =''
     for i in range(8):
         for j in range(8):
-            if boardConverted[i][j]!='' & board[i][j]=='':
+            if (boardConverted[i][j]=='X'or boardConverted[i][j]=='O') and board[i][j]=='':
                 return [i, j]
 
 def getMessage(message, iaPlayer):
+    global opponentTile, computerTile
+    if message['current']==0 or message['current']==1: #check if new game
+        opponentTile, computerTile =['','']  #reset tile for opponent en computer
+    if computerTile=='' and opponentTile == '':
+        if message['players'][0] == iaPlayer:
+            opponentTile, computerTile = ['O', 'X']
+            print('marche1')
+        else:
+            opponentTile, computerTile = ['X', 'O']
+            print('marche2')
     move = playGame(opponentTile, computerTile, message, iaPlayer)
     moveConverted = (int(move[0])*8)+int(move[1])
     return moveConverted #à completer
 
 def findOpponentTurn(message, iaPlayer):
-    if message['players'][0] == iaPlayer:
-        return 'computer' # ia joue en premier
-    else:
-        return 'opponent' # ia joue en deuxieme
+    turn = int(message['current'])%2
+    print("turn"+str(turn))
+    #check (when player is first and play when current is even) or check (when player is second and play when current is odd)
+    if (message['players'][0] == iaPlayer and turn == 0) or (message['players'][1] == iaPlayer and turn == 1):  
+        return 'computer'
+    else: # else it is the opponent turn
+        return 'opponent'
 
-def printScore(board, opponentTile, computerTile):
+def printScore(board):
     scores = getScoreOfBoard(board)
 
 def playGame(opponentTile, computerTile, message, iaPlayer):
     turn = findOpponentTurn(message, iaPlayer)
-
-    # Clear the board and place starting pieces.
-    board = getNewBoard()
-    board[3][3] = 'O'
-    board[3][4] = 'X'
-    board[4][3] = 'X'
-    board[4][4] = 'O'
+    board = boardConvertion(message)
 
     while True:
         #Récupère les coups possibles pour chaque joueur
@@ -205,24 +187,18 @@ def playGame(opponentTile, computerTile, message, iaPlayer):
         if opponentValidMoves == [] and computerValidMoves == []:
             break # No one can move, so end the game.
 
-        elif turn == 'opponent': # opponent's turn
-            if opponentValidMoves != []:
-                printScore(board, opponentTile, computerTile)
-                boardConverted = boardConvertion(message)
-                move = findOpponentMove(boardConverted,board)
-                if move == 'quit': # pas prévu
-                    sys.exit() # Terminate the program.
-                else:
-                    makeMove(board, opponentTile, move[0], move[1])
-            turn = 'computer'
-
         elif turn == 'computer': # Computer's turn
             if computerValidMoves != []:
-                printScore(board, opponentTile, computerTile)
+                printScore(board)
+                print(computerTile)
                 move = getComputerMove(board, computerTile)
+                print('testmove')
+                print(move)
+                for i in range(8):
+                    print(board[i])
                 makeMove(board, computerTile, move[0], move[1])
                 return move
-            turn = 'opponent'
+            else:
+                return null
 
 
-opponentTile, computerTile = enterOpponentTile()
