@@ -7,7 +7,7 @@ import threading
 import sys
 
 port = sys.argv[1]
-listenAddress = ('0.0.0.0', int(port))
+listenAddress = ("0.0.0.0", int(port))
 text={
    "request": "subscribe",
    "port": 3001,
@@ -50,6 +50,9 @@ def communication():
                 if message['request']=='play':
                     reponseMove = ia_v2.getMessage(message['state'],text['name']) #donner le chiffre de la case en integer
                     repMove['move']=reponseMove
+                    if repMove == None : 
+                        repMove['message']='Mouais, la chance du débutant'
+                        print('passe tour')
                     client.send(json.dumps(repMove).encode())
                     # print(message['state']['board'][0])
                     # #client.send(json.dumps(surrend).encode())
@@ -68,6 +71,7 @@ def connexion():
         s.connect(address)
         s.send(message.encode())
         reponse = json.loads(s.recv(2048).decode())
+        print(reponse)
         if reponse['response'] == 'ok': # if the response is ok, it means that we succesfull connected so run communication
             communication()
         

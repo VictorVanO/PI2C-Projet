@@ -99,7 +99,7 @@ def isOnCorner(x, y):
     # Return True if the position is in one of the four corners.
     return (x == 0 or x == width - 1) and (y == 0 or y == height - 1)
 
-def getComputerMove(board, computerTile):
+def getComputerMove(board, computerTile, opponentTile):
     # Given a board and the computer's tile, determine where to
     # move and return that move as an [x, y] list.
     possibleMoves = getValidMoves(board, computerTile)
@@ -115,6 +115,14 @@ def getComputerMove(board, computerTile):
         boardCopy = getBoardCopy(board)
         makeMove(boardCopy, computerTile, x, y)
         score = getScoreOfBoard(boardCopy)[computerTile]
+        # #check the opponent move after ours
+        # opponentMoves = getValidMoves(boardCopy, opponentTile)
+        # #check if we give the corner to the opponent 
+        # for xOpponent, yOpponent in opponentMoves:
+        #     #if the answer is yes then say that the score is null
+        #     if isOnCorner(xOpponent, yOpponent):
+        #         score = 0
+        print(score)
         if score > bestScore:
             bestMove = [x, y]
             bestScore = score
@@ -155,17 +163,17 @@ def getMessage(message, iaPlayer):
     if computerTile=='' and opponentTile == '':
         if message['players'][0] == iaPlayer:
             opponentTile, computerTile = ['O', 'X']
-            print('marche1')
         else:
             opponentTile, computerTile = ['X', 'O']
-            print('marche2')
     move = playGame(opponentTile, computerTile, message, iaPlayer)
-    moveConverted = (int(move[0])*8)+int(move[1])
-    return moveConverted #à completer
+    if move == None:
+        moveConverted=move
+    else:
+        moveConverted = (int(move[0])*8)+int(move[1])
+    return moveConverted 
 
 def findOpponentTurn(message, iaPlayer):
     turn = int(message['current'])%2
-    print("turn"+str(turn))
     #check (when player is first and play when current is even) or check (when player is second and play when current is odd)
     if (message['players'][0] == iaPlayer and turn == 0) or (message['players'][1] == iaPlayer and turn == 1):  
         return 'computer'
@@ -191,14 +199,13 @@ def playGame(opponentTile, computerTile, message, iaPlayer):
             if computerValidMoves != []:
                 printScore(board)
                 print(computerTile)
-                move = getComputerMove(board, computerTile)
-                print('testmove')
-                print(move)
+                move = getComputerMove(board, computerTile, opponentTile)
+                print('le move pour les '+computerTile+' est '+str(move))
                 for i in range(8):
                     print(board[i])
                 makeMove(board, computerTile, move[0], move[1])
                 return move
             else:
-                return null
+                return None
 
 
