@@ -1,7 +1,6 @@
 #reference : https://inventwithpython.com/invent4thed/chapter15.html
 import random
 import sys
-import communication
 
 width = 8
 height = 8
@@ -149,13 +148,6 @@ def boardConvertion(message):
         boardConverted[x][y]='O'
     return boardConverted
 
-def findOpponentMove(boardConverted,board):
-    opponentMove =''
-    for i in range(8):
-        for j in range(8):
-            if (boardConverted[i][j]=='X'or boardConverted[i][j]=='O') and board[i][j]=='':
-                return [i, j]
-
 def getMessage(message, iaPlayer):
     global opponentTile, computerTile
     if message['current']==0 or message['current']==1: #check if new game
@@ -207,5 +199,3 @@ def playGame(opponentTile, computerTile, message, iaPlayer):
                 return move
             else:
                 return None
-
-
