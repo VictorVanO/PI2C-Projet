@@ -1,7 +1,8 @@
 # PI2C-Projet
 IA for Othello game using python created by Van Olffen Victor n°20253 and Maillard Corentin n°21306
 
-Our IA's strategy is to aim for the highest scoring move and the corners of the board.
+## Strategy :
+Our IA's strategy is to aim first for the corners of the board and if it is not possible take the highest scoring move.
 
 ## Launch command :
 python communication.py 3001
