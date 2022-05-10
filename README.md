@@ -10,5 +10,6 @@ python communication.py 3001
 random, sys, pytest
 ## Coverage test :
 [![Run Tests](https://github.com/VictorVanO/PI2C-Projet/actions/workflows/test.yml/badge.svg)](https://github.com/VictorVanO/PI2C-Projet/actions/workflows/test.yml)
+![image](https://user-images.githubusercontent.com/33122169/167600829-c8479c3e-721a-4fad-b01a-f2d5b08a1047.png)
 ## Source :
 Chapter 15 - The Reversegam Game : https://inventwithpython.com/invent4thed/chapter15.html
