@@ -24,4 +24,8 @@ def test_makeMove():
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']]
+<<<<<<< HEAD
     assert ia_v2.makeMove(board, 'X', 2, 2)==False
+=======
+    assert ia_v2.makeMove(board, 'X', 2, 2)==False
+>>>>>>> f094d2fd3b5f58c5d4cfeae7a671363ee7bc7af2
