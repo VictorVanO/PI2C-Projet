@@ -10,7 +10,7 @@ port = sys.argv[1]
 listenAddress = ("0.0.0.0", int(port))
 text={
    "request": "subscribe",
-   "port": 3001,
+   "port": int(port),
    "name": "CKC",
    "matricules": ["20253", "21306"]
 }
@@ -24,7 +24,7 @@ text2={
 
 repPing = {"response": "pong"}
 
-#repMove['move'] = none pour passer le tour
+#repMove['move'] = None pour passer le tour
 repMove = {
     "response": "move",
     "move": 0,
@@ -48,23 +48,15 @@ def communication():
                     client.send(json.dumps(repPing).encode())
 
                 if message['request']=='play':
-                    reponseMove = ia_v2.getMessage(message['state'],text['name']) #donner le chiffre de la case en integer
+                    reponseMove = ia_v2.getMessage(message['state'],text['name']) #get the state from message and the name of our ia
                     repMove['move']=reponseMove
-                    if repMove == None : 
+                    if reponseMove == None : #just for fun if when can't play change the message associated
                         repMove['message']='Mouais, la chance du débutant'
-                        print('passe tour')
                     client.send(json.dumps(repMove).encode())
-                    # print(message['state']['board'][0])
-                    # #client.send(json.dumps(surrend).encode())
-                    # print(message['state']['board'][0]==[28, 35])
-                    # if message['state']['board'][0]==[28, 35]:
-                    #     repMove['move']=44
-                    #     print(repMove)
-                    #     client.send(json.dumps(repMove).encode())
 
 
 def connexion():
-    address = ('localhost', 3000)
+    address = ('localhost', 3000) #192.168.43.178
     message = json.dumps(text)
     
     with socket.socket() as s: # close the socket after the execution
@@ -74,11 +66,10 @@ def connexion():
         print(reponse)
         if reponse['response'] == 'ok': # if the response is ok, it means that we succesfull connected so run communication
             communication()
-        
-        
-            
-message ={'players': ['CAVA', 'CKC'], 'current': 1, 'board': [[28, 35, 44, 36], [27]]}
+
+
+
 if __name__=='__main__':
-    if port == '3002':
-        text=text2
+    # if port == '3002':
+    #     text=text2
     connexion()
